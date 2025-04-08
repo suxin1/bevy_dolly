@@ -58,9 +58,12 @@ fn setup(
 }
 
 fn update_camera(q0: Query<&Transform, With<Rotates>>, mut q1: Query<&mut Rig>) {
-    let player = q0.single().to_owned();
-    let mut rig = q1.single_mut();
-
+    let Ok(player) = q0.single() else {
+        return;
+    };
+    let Ok(mut rig) = q1.single_mut() else {
+        return;
+    };
     rig.driver_mut::<MovableLookAt>()
         .set_position_target(player.translation, player.rotation);
 }

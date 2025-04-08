@@ -1,5 +1,4 @@
 use std::marker::PhantomData;
-
 use crate::prelude::*;
 use bevy::prelude::*;
 
@@ -66,19 +65,21 @@ where
     const RANGE_SCALE_2D: f32 = 1. + Self::SCALE_INCR_THRESHOLD;
 
     pub fn update_2d_active(
-        mut cameras: Query<(&mut Transform, &mut OrthographicProjection, &Camera), With<T>>,
+        mut cameras: Query<(&mut Transform, &mut Projection, &Camera), With<T>>,
         time: Res<Time>,
         mut query: Query<&mut Rig, (Changed<Rig>, With<T>)>,
     ) {
         for mut rig in &mut query {
             let mut transform = rig.update(time.delta_secs());
-            cameras.iter_mut().for_each(|(mut t, mut orth, camera)| {
+            cameras.iter_mut().for_each(|(mut t, mut projection, camera)| {
                 if camera.is_active {
                     //Bind camera's Z axis to scale, if used for init state check to prevent scale of 0
                     if !(transform.translation.z < Self::RANGE_SCALE_2D
                         && transform.translation.z > -Self::RANGE_SCALE_2D)
                     {
-                        orth.scale = (transform.translation.z + 1.) * Self::SCALE_INCR_THRESHOLD;
+                        if let Projection::Orthographic(ref mut orth) = *projection {
+                            orth.scale = (transform.translation.z + 1.) * Self::SCALE_INCR_THRESHOLD;
+                        }
                     }
                     //Drop Z from camera's transform calculations and keep original
                     let xy = transform.translation.truncate().extend(t.translation.z);
@@ -132,19 +133,21 @@ where
 
     #[allow(clippy::type_complexity)]
     pub fn update_2d_active_continuous(
-        mut cameras: Query<(&mut Transform, &mut OrthographicProjection, &Camera), With<T>>,
+        mut cameras: Query<(&mut Transform, &mut Projection, &Camera), With<T>>,
         time: Res<Time>,
         mut query: Query<&mut Rig, With<T>>,
     ) {
         for mut rig in &mut query {
             let mut transform = rig.update(time.delta_secs());
-            cameras.iter_mut().for_each(|(mut t, mut orth, camera)| {
+            cameras.iter_mut().for_each(|(mut t, mut projection, camera)| {
                 if camera.is_active {
                     //Bind camera's Z axis to scale, if used for init state check to prevent scale of 0
                     if !(transform.translation.z < Self::RANGE_SCALE_2D
                         && transform.translation.z > -Self::RANGE_SCALE_2D)
                     {
-                        orth.scale = (transform.translation.z + 1.) * Self::SCALE_INCR_THRESHOLD;
+                        if let Projection::Orthographic(ref mut orth) = *projection {
+                            orth.scale = (transform.translation.z + 1.) * Self::SCALE_INCR_THRESHOLD;
+                        }
                     }
                     //Drop Z from camera's transform calculations and keep original
                     let xy = transform.translation.truncate().extend(t.translation.z);

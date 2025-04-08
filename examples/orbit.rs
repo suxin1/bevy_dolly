@@ -131,8 +131,8 @@ fn swap_camera(
     mut q_sec: Query<(Entity, &mut Camera), (With<SecondCamera>, Without<MainCamera>)>,
 ) {
     if keys.just_pressed(KeyCode::KeyT) {
-        if let Ok((e_main, cam_main)) = &mut q_main.get_single_mut() {
-            if let Ok((e_sec, cam_sec)) = &mut q_sec.get_single_mut() {
+        if let Ok((e_main, cam_main)) = &mut q_main.single_mut() {
+            if let Ok((e_sec, cam_sec)) = &mut q_sec.single_mut() {
                 commands
                     .entity(*e_main)
                     .remove::<MainCamera>()
@@ -178,7 +178,7 @@ fn handle_mouse_scroll(
                 Projection::Perspective(pers) => {
                     if *zoom == ZoomType::Fov {
                         pers.fov = (pers.fov - mouse_wheel_event.y * 0.01).abs();
-                    } else if let Ok(mut rig) = rig_q.get_single_mut() {
+                    } else if let Ok(mut rig) = rig_q.single_mut() {
                         if let Some(arm) = rig.try_driver_mut::<Arm>() {
                             let mut xz = arm.offset;
                             xz.z = (xz.z - mouse_wheel_event.y * 0.5).abs();
@@ -189,6 +189,7 @@ fn handle_mouse_scroll(
                 Projection::Orthographic(orth) => {
                     orth.scale = (orth.scale - mouse_wheel_event.y * 0.1).abs();
                 }
+                _ => unreachable!()
             }
         }
     }
@@ -205,7 +206,9 @@ fn update_camera(
     mut config: ResMut<DollyPosCtrlConfig>,
     grab_config: Res<DollyCursorGrabConfig>,
 ) {
-    let mut rig = rig_q.single_mut();
+    let Ok(mut rig) = rig_q.single_mut() else {
+        return;
+    };
     let camera_yp = rig.driver_mut::<YawPitch>();
     let sensitivity = Vec2::splat(2.0);
 

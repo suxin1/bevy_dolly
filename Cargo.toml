@@ -28,16 +28,16 @@ dolly = { path = "dolly", default-features = false }
 leafwing-input-manager = { version = "0.16", optional = true }
 
 [dependencies.bevy]
-version = "0.15"
+version = "0.16.0-rc.3"
 features = ["bevy_render", "bevy_asset", "bevy_window"]
 default-features = false
 
 [dev-dependencies]
 leafwing-input-manager = "0.16"
-bevy-inspector-egui = "0.28"
+bevy-inspector-egui = "0.30.0"
 
 [dev-dependencies.bevy]
-version = "0.15"
+version = "0.16.0-rc.3"
 features = [
     "bevy_core_pipeline",
     "animation",
@@ -56,7 +56,12 @@ features = [
 ]
 default-features = false
 
+[patch.crates-io]
+leafwing-input-manager = {git = "https://github.com/Leafwing-Studios/leafwing-input-manager.git", rev="90e80af"}
+bevy-inspector-egui = { git = "https://github.com/slyedoc/bevy-inspector-egui.git", rev="b24b8fb"}
+
 [target.'cfg(target_os = "linux")'.dev-dependencies.bevy]
 version = "0.15"
 features = ["x11", "wayland"]
 default-features = false
+

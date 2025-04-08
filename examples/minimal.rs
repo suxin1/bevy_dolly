@@ -57,6 +57,7 @@ fn update_camera(
     )>,
 ) {
     let mut p0 = query.p0();
-    let player = p0.single_mut();
-    query.p1().single_mut().driver_mut::<LookAt>().target = player.translation;
+    let Ok(player) = p0.single_mut() else {return};
+
+    query.p1().single_mut().unwrap().driver_mut::<LookAt>().target = player.translation;
 }

@@ -93,8 +93,7 @@ fn setup(
 }
 
 fn follow_player(query: Query<&Transform, With<DollyPosCtrlMove>>, mut q: Query<&mut Rig>) {
-    if let Ok(p) = query.get_single() {
-        let mut rig = q.single_mut();
+    if let (Ok(p), Ok(mut rig)) = (query.single(), q.single_mut()) {
         rig.driver_mut::<Position>().position = p.translation;
         rig.driver_mut::<Rotation>().rotation = p.rotation;
         rig.driver_mut::<LookAt>().target = p.translation + Vec3::Y + Vec3::new(0., -1., 0.);
@@ -102,8 +101,7 @@ fn follow_player(query: Query<&Transform, With<DollyPosCtrlMove>>, mut q: Query<
 }
 
 fn follow_sheep(query: Query<&Transform, With<Rotates>>, mut rig_q: Query<&mut Rig>) {
-    if let Ok(p) = query.get_single() {
-        let mut rig = rig_q.single_mut();
+    if let (Ok(p), Ok(mut rig)) = (query.single(), rig_q.single_mut()) {
         rig.driver_mut::<Position>().position = p.translation;
         rig.driver_mut::<Rotation>().rotation = p.rotation;
         rig.driver_mut::<LookAt>().target = p.translation + Vec3::Y;

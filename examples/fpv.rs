@@ -131,9 +131,9 @@ fn update_camera(
     delta.x *= sensitivity.x;
     delta.y *= sensitivity.y;
 
-    let mut rig = rig_q.single_mut();
+    let Ok(mut rig) = rig_q.single_mut() else {return;};
 
-    if let Ok(window) = windows.get_single() {
+    if let Ok(window) = windows.single() {
         if !window.cursor_options.visible {
             rig.driver_mut::<Fpv>().update_pos_rot(
                 move_vec,

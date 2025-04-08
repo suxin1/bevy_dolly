@@ -90,12 +90,12 @@ fn initial_grab_cursor(
     mut config: ResMut<DollyCursorGrabConfig>,
 ) {
     config.visible = if !config.enabled {
-        if let Ok(window) = &mut windows.get_single_mut() {
+        if let Ok(window) = &mut windows.single_mut() {
             toggle_grab_cursor(window)
         } else {
             false
         }
-    } else if let Ok(window) = &mut windows.get_single_mut() {
+    } else if let Ok(window) = &mut windows.single_mut() {
         toggle_grab_cursor(window)
     } else {
         warn!("Primary window not found for `initial_grab_cursor`!");
@@ -109,7 +109,7 @@ fn cursor_grab(
     //act_query: Query<&ActionState<GrabAction>, With<DollyCursorGrabAction>>,
     mut config: ResMut<DollyCursorGrabConfig>,
 ) {
-    if let Ok(window) = &mut windows.get_single_mut() {
+    if let Ok(window) = &mut windows.single_mut() {
         //if let Ok(grab_action) = act_query.get_single() {
         if keys.just_pressed(KeyCode::Escape) {
             config.visible = toggle_grab_cursor(window);

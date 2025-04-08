@@ -270,7 +270,9 @@ fn dolly_pos_ctrl_move_update(
     mut transforms: Query<&mut Transform, With<DollyPosCtrlMove>>,
     act_query: Query<&ActionState<MoveAction>, With<DollyPosCtrlAction>>,
 ) {
-    let action_state = act_query.single();
+    let Ok(action_state) = act_query.single() else {
+        return;
+    };
 
     for mut transform in transforms.iter_mut() {
         let (_, mut rotation) = transform.rotation.to_axis_angle();
